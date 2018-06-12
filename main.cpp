@@ -15,7 +15,6 @@ int cost(int, set<int>); // compute cost for the tsp() function
 vector<vector<int>> adj; // adjacency matrix to store edge weights
 const int v = 4; // number of nodes
 vector<int> minimumPath(v + 1, -1); // to store the path
-int counter = 0;
 
 int main() // no explanation needed here!
 {
@@ -23,9 +22,9 @@ int main() // no explanation needed here!
     // to store adjacency matrix, we use constructor of vector as in:
     // vector < value_type > (initializer_list < value_type > __I)
     adj = vector<vector<int>>({ { 0, 10, 15, 20 },
-                                { 10, 0, 35, 25 },
-                                { 15, 35, 0, 30 },
-                                { 20, 25, 30, 0 } });
+                                { 5, 0, 9, 10 },
+                                { 6, 13, 0, 12 },
+                                { 8, 8, 9, 0 } });
     cout << "minimum hamiltonian cycle (tsp) is: " << tsp () << endl;
     for (auto& i : minimumPath)
         cout << i << setw(3);
@@ -53,7 +52,6 @@ int tsp()
     //        because we start from zero and come back to it when it is done
     //        so we have a hamiltonian cycle starting from node zero
     minimumPath[0] = 0; // we start from zero
-    counter++;
     for (int j = 1; j < v; ++j)
     {
         int hold = adj[0][j]; // STARTING EDGE
@@ -63,7 +61,12 @@ int tsp()
             min = hold;
     }
     minimumPath[v] = 0;
-    counter++;
+
+    for (int i = 0; i < minimumPath.size() / 2; ++i) {
+        int hold = minimumPath[i];
+        minimumPath[i] = minimumPath[(v - 0) - i];
+        minimumPath[(v - 0) - i] = hold;
+    }
 
 
     return min; // final result
@@ -105,11 +108,11 @@ int cost (int position, // "position" is the starting node of the minimum tour
 
             if (min > hold) // if we do not have a lesser value of the current computation, save it
             {
+                minimumPath[(v - 1) - (v - 1 - s.size())] = position;
                 min = hold;
             }
 
         }
-        minimumPath[(v - 1) - (v - 1 - s.size())] = position;
         return min;
     }
 }
