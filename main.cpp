@@ -27,7 +27,7 @@ int main() // no explanation needed here!
                                 { 8, 8, 9, 0 } });
     cout << "minimum hamiltonian cycle (tsp) is: " << tsp () << endl;
     for (auto& i : minimumPath)
-        cout << i << setw(3);
+        cout << (i + 1) << setw(3);
     cout << endl;
 }
 
