@@ -2,7 +2,7 @@
 #include <bits/stdc++.h> // INT16_MAX
 #include <set> // standard c++ std::set
 #include <vector> // standard c++ std::vector
-
+#include <iomanip> // setw
 
 
 using namespace std;
@@ -12,10 +12,10 @@ using namespace std;
 int tsp(); // main algorithm
 int cost(int, set<int>); // compute cost for the tsp() function
 
-
 vector<vector<int>> adj; // adjacency matrix to store edge weights
 const int v = 4; // number of nodes
-
+vector<int> minimumPath(v + 1, -1); // to store the path
+int counter = 0;
 
 int main() // no explanation needed here!
 {
@@ -27,6 +27,9 @@ int main() // no explanation needed here!
                                 { 15, 35, 0, 30 },
                                 { 20, 25, 30, 0 } });
     cout << "minimum hamiltonian cycle (tsp) is: " << tsp () << endl;
+    for (auto& i : minimumPath)
+        cout << i << setw(3);
+    cout << endl;
 }
 
 
@@ -49,13 +52,19 @@ int tsp()
     //     2. ENDING EDGE from the last node in the tsp_tour to node zero
     //        because we start from zero and come back to it when it is done
     //        so we have a hamiltonian cycle starting from node zero
+    minimumPath[0] = 0; // we start from zero
+    counter++;
     for (int j = 1; j < v; ++j)
     {
         int hold = adj[0][j]; // STARTING EDGE
+
         hold += cost(j, middles); // the minimum tour from a node other than zero to a node before zero
         if (min > hold) // store minimum tour if we haven't stored it already
             min = hold;
     }
+    minimumPath[v] = 0;
+    counter++;
+
 
     return min; // final result
 }
@@ -64,7 +73,10 @@ int cost (int position, // "position" is the starting node of the minimum tour
           set<int> s) // the subset containing the unvisited nodes
 {
     if (s.size() == 0) // if we have visited all the nodes in the network
+    {
+        minimumPath[(v - 1) - s.size()] = position;
         return adj[position][0]; // ENDING EDGE
+    }
     else
     {
         int min = INT16_MAX; // an upper bound, that makes every other tour in the network a lesser cost
@@ -80,7 +92,7 @@ int cost (int position, // "position" is the starting node of the minimum tour
         {
             int i = *ii; // store the value of the current node for example node number 1
 
-            // againg remove the next node from unvisited nodes
+            // again remove the next node from unvisited nodes
             set<int> tmp = s;
             set<int>::const_iterator f2 = tmp.find(i);
             if (f2 != tmp.end())
@@ -92,9 +104,12 @@ int cost (int position, // "position" is the starting node of the minimum tour
             hold += cost (i, tmp); // compute the minimum tsp_tour recursivel
 
             if (min > hold) // if we do not have a lesser value of the current computation, save it
+            {
                 min = hold;
+            }
 
         }
+        minimumPath[(v - 1) - (v - 1 - s.size())] = position;
         return min;
     }
 }
